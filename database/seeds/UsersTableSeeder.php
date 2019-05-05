@@ -15,7 +15,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'phone' => '79999999999',
-            'password' => bcrypt('12345678'),
+            'password' => bcrypt('E543Fgty62'),
             'role_id' => 1
         ]);
 
@@ -24,7 +24,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'user' . $i,
                 'email' => 'user' . $i . '@gmail.com',
                 'phone' => '7999999999' . $i,
-                'password' => bcrypt('12345678'),
+                'password' => bcrypt('K45U8ge6fW'),
                 'role_id' => 3
             ]);
         }

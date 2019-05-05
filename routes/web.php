@@ -75,6 +75,10 @@ Route::group(['prefix' => '/post'], function() {
 
 });
 
+Route::get('log-in/{provider}', 'GoogleController@redirectToProvider');
+
+Route::get('log-in/{provider}/callback', 'GoogleController@handleProviderCallback');
+
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');

@@ -10,7 +10,6 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Auth;
 use DB;
 
-
 class AuthController extends Controller
 {
     use ResetsPasswords;

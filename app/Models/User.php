@@ -21,6 +21,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password', 'remember_token',
     ];
 
+    protected $fillable = [
+        'name', 'email', 'provider', 'provider_id', 'role_id', 'phone', 'email_verified_at'
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *
