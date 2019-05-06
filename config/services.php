@@ -49,4 +49,10 @@ return [
         'redirect' => env('GOOGLE_URL'),
     ],
 
+    'twitter' => [
+        'client_id' => env('TWITTER_ID'),
+        'client_secret' => env('TWITTER_SECRET'),
+        'redirect' => env('TWITTER_URL'),
+    ],
+
 ];
