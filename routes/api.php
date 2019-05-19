@@ -20,4 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'api'], function() {
     Route::match(['get', 'post'], '/contact', 'ApiController@contact')
         ->name('api.contact');
+
+    Route::match(['get', 'post'], '/like', 'ApiController@like')
+        ->name('api.like');
+
+    Route::match(['get', 'post'], '/comment', 'ApiController@comment')
+        ->name('api.comment');
+
+
 });

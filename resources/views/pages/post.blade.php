@@ -27,6 +27,13 @@
         </div>
     </div>
 
+    @if((\Illuminate\Support\Facades\Auth::id()) != null && $post->user_id != \Illuminate\Support\Facades\Auth::id())
+        <div class="like-area" data-id="{{ $post->id }}">
+            <a class="like i-l {{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 1 ? 'green' : '' : ''}} " href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
+            <a class="like i-d {{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == -1 ? 'red' : '' : ''}}" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
+        </div>
+    @endif
+
     <!-- Post Tags & Share -->
     <div class="post-tags-share d-flex justify-content-between align-items-center">
         <!-- Tags -->
@@ -89,6 +96,33 @@
         <div class="curve-line bg-img" style="background-image: url(img/core-img/breadcrumb-line.png);"></div>
     </div>
 
+    @auth
+        <div class="leave-comment-area clearfix">
+            <div class="comment-form">
+                <h4 class="headline">Leave A Comment</h4>
+
+                <!-- Comment Form -->
+                <form action="" method="post" id="leave-comment">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <textarea class="form-control" name="message" id="message" cols="30" rows="10" placeholder="Comment"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn foode-btn">Post Comment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endauth
+
+    @guest
+        <h4 class="headline"><a href="{{ route('Auth.signUp.Get') }}" style="font-size: 25px" ><b>Register</b></a> or <a href="{{ route('Auth.logIn.Get') }}" style="font-size: 25px" ><b>login</b></a>  to leave a comment</h4>
+@endguest
+
     <!-- Comment Area Start -->
     <div class="comment_area clearfix">
         @if($post->comments_count != 0)
@@ -96,8 +130,8 @@
         @else
             <h4 class="headline">There is no comments</h4>
         @endif
-            <ol>
-            @foreach($post->comments as $comment)
+            <ol id="comments-place">
+            @foreach($comments as $comment)
                 <li class="single_comment_area">
                     <div class="comment-wrapper d-flex">
                         <!-- Comment Meta -->
@@ -118,32 +152,106 @@
         </ol>
     </div>
 
-
-
-    @auth
-        <div class="leave-comment-area clearfix">
-            <div class="comment-form">
-                <h4 class="headline">Leave A Comment</h4>
-
-                <!-- Comment Form -->
-                <form action="" method="post">
-                    {{ csrf_field() }}
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <textarea class="form-control" name="message" id="message" cols="30" rows="10" placeholder="Comment"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn foode-btn">Post Comment</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endauth
-
-    @guest
-        <h4 class="headline"><a href="{{ route('Auth.signUp.Get') }}" style="font-size: 25px" ><b>Register</b></a> or <a href="{{ route('Auth.logIn.Get') }}" style="font-size: 25px" ><b>login</b></a>  to leave a comment</h4>
-    @endguest
+    <ol class="foode-pager">
+        @if($comments->currentPage() == 1 && $comments->currentPage() == $comments->lastPage())
+            <li></li>
+            <li></li>
+        @elseif($comments->currentPage() == $comments->lastPage())
+            <li><a href="{{ $comments->previousPageUrl("#leave-comment") . "#leave-comment" }}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Newer</a></li>
+            <li></li>
+        @elseif($comments->currentPage() == 1)
+            <li></li>
+            <li><a href="{{ $comments->nextPageUrl('leave-comment') . "#leave-comment" }}">Older <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
+        @else
+            <li><a href="{{ $comments->previousPageUrl() . "#leave-comment"}}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Newer</a></li>
+            <li><a href="{{ $comments->nextPageUrl() . "#leave-comment"}}">Older <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
+        @endif
+    </ol>
 </div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+<script>
+
+    $(function() {
+        $('#leave-comment').on('submit', function  (e) {
+            let message = $('[name="message"]').val();
+            let userId = {{ \Illuminate\Support\Facades\Auth::id() }}
+
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            let postPromise = $.post( "{{ route('api.comment') }}", {
+                message: message,
+                user_id: userId,
+                post_id: "{{ $post->id }}",
+            });
+            postPromise.then(function (data) {
+                console.log('good');
+                $('[name="message"]').val('');
+                let el = "<li class=\"single_comment_area\"> <div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\"> </div> <div class=\"comment-content\"><span class=\"comment-date\">{{ date('d F Y - G:i')}}</span><h5>@auth{{ \Illuminate\Support\Facades\Auth::user()->name }}@endauth</h5><p>" + message + "</p> </div></div></li>";
+                $('#comments-place').prepend(el);
+                let commentarea = $('.comment_area .headline');
+                commentarea.text(parseInt(commentarea.text())+1 + " Comments");
+            }, function (errorData) {
+                console.log('bad');
+            });
+        });
+
+
+        $('.like').on('click', function  (e) {
+            let postId = e.target.parentNode.parentNode.dataset['id'];
+            let isLike = e.target.closest( ".like" ).previousElementSibling == null;
+            let userId = {{ \Illuminate\Support\Facades\Auth::id() }}
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            var postPromise = $.post( "{{ route('api.like') }}", {
+                post_id: postId,
+                user_id: userId,
+                like: isLike,
+            });
+            postPromise.then(function (data) {
+
+                let likeArea = $(e.target).closest( ".like-area" );
+
+                let objLike = likeArea.find('.i-l');
+                let objDis = likeArea.find('.i-d');
+                let likeNumber = objLike.find('.like-number');
+                let dislikeNumber = objDis.find('.like-number');
+
+                if(isLike == 1){
+                    if(objLike.hasClass('green')){
+                        objLike.removeClass('green');
+                        likeNumber.text(parseInt(likeNumber.text())-1);
+                    } else {
+                        objLike.addClass('green');
+                        likeNumber.text(parseInt(likeNumber.text())+1);
+                        if(objDis.hasClass('red')){
+                            dislikeNumber.text(parseInt(dislikeNumber.text())-1);
+                        }
+                        objDis.removeClass('red');
+                    }
+                } else {
+                    if(objDis.hasClass('red')){
+                        objDis.removeClass('red');
+                        dislikeNumber.text(parseInt(dislikeNumber.text())-1);
+                    } else {
+                        objDis.addClass('red');
+                        dislikeNumber.text(parseInt(dislikeNumber.text())+1);
+                        if(objLike.hasClass('green')){
+                            likeNumber.text(parseInt(likeNumber.text())-1);
+                        }
+                        objLike.removeClass('green');
+                    }
+                }
+            }, function (errorData) {
+                console.log('bad');
+            });
+        });
+    });
+
+</script>

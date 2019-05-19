@@ -7,6 +7,7 @@ use App\Http\Requests\PostRequest;
 use App\Http\Requests\PostEditRequest;
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\Post_tag;
 use App\Models\Tag;
@@ -23,7 +24,14 @@ class PostController extends Controller
     public function Main()
     {
         $posts = Post::where('is_active', '1')
-            ->withCount('comments')
+            ->withCount(['comments',
+                'likes' => function($query) {
+                    $query->where('like', '1');
+                },
+                'likes AS dislikes_count' => function($query) {
+                    $query->where('like', '-1');
+                }
+            ])
             ->with('category', 'user')
             ->orderBy('created_at', 'DESC')
             ->paginate(6);
@@ -45,7 +53,14 @@ class PostController extends Controller
 
         $posts = Post::where('is_active', '1')
             ->where('category_id', $category->id)
-            ->withCount('comments')
+            ->withCount(['comments',
+                'likes' => function($query) {
+                    $query->where('like', '1');
+                },
+                'likes AS dislikes_count' => function($query) {
+                    $query->where('like', '-1');
+                }
+            ])
             ->with('category', 'user')
             ->orderBy('created_at', 'DESC')
             ->paginate(6);
@@ -66,7 +81,14 @@ class PostController extends Controller
 
         $posts = $tag->posts()
             ->where('is_active', '1')
-            ->withCount('comments')
+            ->withCount(['comments',
+                'likes' => function($query) {
+                    $query->where('like', '1');
+                },
+                'likes AS dislikes_count' => function($query) {
+                    $query->where('like', '-1');
+                }
+            ])
             ->with('category', 'user')
             ->orderBy('created_at', 'DESC')
             ->paginate(6);
@@ -104,7 +126,14 @@ class PostController extends Controller
         $user = Auth::user()->id;
 
         $posts = Post::where('user_id', '=', $user)
-            ->withCount('comments')
+            ->withCount(['comments',
+                'likes' => function($query) {
+                    $query->where('like', '1');
+                },
+                'likes AS dislikes_count' => function($query) {
+                    $query->where('like', '-1');
+                }
+            ])
             ->with('category', 'user')
             ->orderBy('created_at', 'DESC')
             ->paginate(6);
@@ -121,10 +150,21 @@ class PostController extends Controller
 
     public function OneGet($id)
     {
-        $post = Post::withCount('comments')
+        $post = Post::withCount(['comments',
+                'likes' => function($query) {
+                    $query->where('like', '1');
+                },
+                'likes AS dislikes_count' => function($query) {
+                    $query->where('like', '-1');
+                }
+            ])
             ->with('category', 'user', 'tags')
             ->where('is_active', '1')
             ->findOrFail($id);
+
+        $comments = $post->comments()
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
 
         $samePosts = Post::where('category_id', $post->category->id)
             ->where('is_active', '1')
@@ -150,24 +190,8 @@ class PostController extends Controller
             'ways' => ['Post', $post->title],
             'post' => $post,
             'samePosts' => $samePosts,
+            'comments' => $comments,
         ]);
-    }
-
-    public function OnePost($id, Request $request)
-    {
-        $request->validate([
-            'message' => 'required|max:2000'
-        ]);
-
-        $comment = new Comment();
-
-        $comment->body = $request->input('message');
-        $comment->user_id = Auth::id();
-        $comment->post_id = $id;
-
-        $comment->save();
-
-        return back();
     }
 
     public function Delete($id)

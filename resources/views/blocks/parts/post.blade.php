@@ -19,7 +19,7 @@
         <div class="post-meta">
             <a href="#"><span>by</span> {{ $post->user->name }}</a>
             <a href="#"><i class="fa fa-eye"></i> {{ $post->views }}</a>
-            <a href="#"><i class="fa fa-comments"></i> {{ $post->comments_count ?? $post->comments->count() }}</a>
+            <a href="#"><i class="fa fa-comments"></i> {{ $post->comments_count ?? $post->comments_count }}</a>
         </div>
         <p class="post-excerpt">{{ $post->preview }}</p>
         <a href="{{ url("/post/{$post->id}") }}" class="read-more-btn">Continue Reading <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
@@ -30,6 +30,12 @@
         @can('delete_own', $post)
             <a onclick="return confirm('Are you sure?')" href="{{ route('post.delete', $post->id) }}" class="read-more-btn ml-30">Delete <i class="fa" aria-hidden="true"></i></a>
         @endcan
+            @if((\Illuminate\Support\Facades\Auth::id()) != null && $post->user_id != \Illuminate\Support\Facades\Auth::id())
+            <div class="like-area" data-id="{{ $post->id }}">
+                <a class="like i-l {{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 1 ? 'green' : '' : ''}} " href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
+                <a class="like i-d {{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == -1 ? 'red' : '' : ''}}" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
+            </div>
+            @endif
         </div>
     </div>
     <!-- Post Curve Line -->

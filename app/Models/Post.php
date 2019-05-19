@@ -26,6 +26,11 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
 //    public function toSearchableArray()
 //    {
 //        $array = $this->with('user')->with('category')->withCount('comments')->toArray();

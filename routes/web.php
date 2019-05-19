@@ -51,10 +51,6 @@ Route::group(['prefix' => '/post'], function() {
         ->where('id', '[0-9]+')
         ->name('post.one.get');
 
-    Route::post('{id}', 'PostController@OnePost')
-        ->where('id', '[0-9]+')
-        ->name('post.one.post');
-
     Route::get('delete/{id}', 'PostController@Delete')
         ->where('id', '[0-9]+')
         ->name('post.delete');
