@@ -30,12 +30,17 @@ class PostController extends Controller
                 },
                 'likes AS dislikes_count' => function($query) {
                     $query->where('like', '-1');
+                },
+                'likes AS liked'  => function($query) {
+                    $query->where('like', '1')->where('user_id', Auth::id());
+                },
+                'likes AS disliked'  => function($query) {
+                    $query->where('like', '-1')->where('user_id', Auth::id());
                 }
             ])
             ->with('category', 'user')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('posts.created_at', 'DESC')
             ->paginate(6);
-
 
         return view('layouts.primary',[
             'page' => 'pages.main',
@@ -59,6 +64,12 @@ class PostController extends Controller
                 },
                 'likes AS dislikes_count' => function($query) {
                     $query->where('like', '-1');
+                },
+                'likes AS liked'  => function($query) {
+                    $query->where('like', '1')->where('user_id', Auth::id());
+                },
+                'likes AS disliked'  => function($query) {
+                    $query->where('like', '-1')->where('user_id', Auth::id());
                 }
             ])
             ->with('category', 'user')
@@ -87,6 +98,12 @@ class PostController extends Controller
                 },
                 'likes AS dislikes_count' => function($query) {
                     $query->where('like', '-1');
+                },
+                'likes AS liked'  => function($query) {
+                    $query->where('like', '1')->where('user_id', Auth::id());
+                },
+                'likes AS disliked'  => function($query) {
+                    $query->where('like', '-1')->where('user_id', Auth::id());
                 }
             ])
             ->with('category', 'user')
@@ -123,7 +140,7 @@ class PostController extends Controller
 
     public function myPosts()
     {
-        $user = Auth::user()->id;
+        $user = Auth::id();
 
         $posts = Post::where('user_id', '=', $user)
             ->withCount(['comments',
@@ -132,6 +149,12 @@ class PostController extends Controller
                 },
                 'likes AS dislikes_count' => function($query) {
                     $query->where('like', '-1');
+                },
+                'likes AS liked'  => function($query) {
+                    $query->where('like', '1')->where('user_id', Auth::id());
+                },
+                'likes AS disliked'  => function($query) {
+                    $query->where('like', '-1')->where('user_id', Auth::id());
                 }
             ])
             ->with('category', 'user')
@@ -151,13 +174,19 @@ class PostController extends Controller
     public function OneGet($id)
     {
         $post = Post::withCount(['comments',
-                'likes' => function($query) {
-                    $query->where('like', '1');
-                },
-                'likes AS dislikes_count' => function($query) {
-                    $query->where('like', '-1');
-                }
-            ])
+            'likes' => function($query) {
+                $query->where('like', '1');
+            },
+            'likes AS dislikes_count' => function($query) {
+                $query->where('like', '-1');
+            },
+            'likes AS liked'  => function($query) {
+                $query->where('like', '1')->where('user_id', Auth::id());
+            },
+            'likes AS disliked'  => function($query) {
+                $query->where('like', '-1')->where('user_id', Auth::id());
+            }
+        ])
             ->with('category', 'user', 'tags')
             ->where('is_active', '1')
             ->findOrFail($id);

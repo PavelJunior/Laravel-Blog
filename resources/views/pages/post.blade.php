@@ -27,12 +27,18 @@
         </div>
     </div>
 
-    @if((\Illuminate\Support\Facades\Auth::id()) != null && $post->user_id != \Illuminate\Support\Facades\Auth::id())
+    @auth
         <div class="like-area" data-id="{{ $post->id }}">
-            <a class="like i-l {{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 1 ? 'green' : '' : ''}} " href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
-            <a class="like i-d {{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == -1 ? 'red' : '' : ''}}" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
+            <a class="like likestyle i-l {{ $post->liked == '1' ? 'green' : '' }} " href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
+            <a class="like likestyle i-d {{ $post->disliked == '1' ? 'red' : '' }}" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
         </div>
-    @endif
+    @endauth
+    @guest
+        <div class="like-area" data-id="{{ $post->id }}">
+            <a class="likestyle i-l like-disabled" href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
+            <a class="likestyle i-d like-disabled" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
+        </div>
+    @endguest
 
     <!-- Post Tags & Share -->
     <div class="post-tags-share d-flex justify-content-between align-items-center">
@@ -144,7 +150,7 @@
                             <h5>{{ $comment->user->name }}</h5>
                             <p>{{ $comment->body }}</p>
 {{--                            <a href="#">Like</a>--}}
-{{--                            <a class="active" href="#">Reply</a>--}}
+                            <a class="active" href="#">Reply</a>
                         </div>
                     </div>
                 </li>

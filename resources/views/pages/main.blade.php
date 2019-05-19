@@ -36,14 +36,13 @@
         $('.like').on('click', function  (e) {
             let postId = e.target.parentNode.parentNode.dataset['id'];
             let isLike = e.target.closest( ".like" ).previousElementSibling == null;
-            let userId = {{ \Illuminate\Support\Facades\Auth::id() }}
 
             e.stopPropagation();
             e.preventDefault();
 
             var postPromise = $.post( "{{ route('api.like') }}", {
                 post_id: postId,
-                user_id: userId,
+                user_id: fingerprint,
                 like: isLike,
             });
             postPromise.then(function (data) {

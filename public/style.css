@@ -1468,15 +1468,20 @@ img {
   .blog-posts-area .like-area{
     margin-bottom: 30px;
   }
-  .blog-posts-area .like{
+  .blog-posts-area .likestyle{
     margin-right: 15px;
   }
 
-  .blog-posts-area .like i{
+  .blog-posts-area .likestyle i{
     color: #a6a6a6;
     font-size: 28px;
     padding-top: 20px;
     transition: color 0.5s;
+  }
+  .blog-posts-area .like-disabled{
+    color: currentColor;
+    cursor: not-allowed;
+    text-decoration: none;
   }
   .blog-posts-area .green i{
     color: #7AD877;

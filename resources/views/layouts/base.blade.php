@@ -50,6 +50,5 @@
 <script src="{{ asset("js/plugins/plugins.js") }}"></script>
 <script src="{{ asset("js/active.js") }}"></script>
 
-
 </body>
 </html>
