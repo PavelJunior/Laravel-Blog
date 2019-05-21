@@ -192,6 +192,8 @@ class PostController extends Controller
             ->findOrFail($id);
 
         $comments = $post->comments()
+            ->where('parent_id', NULL)
+            ->with('replies')
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
 

@@ -108,7 +108,7 @@
                 <h4 class="headline">Leave A Comment</h4>
 
                 <!-- Comment Form -->
-                <form action="" method="post" id="leave-comment">
+                <form action="" method="post" class="leave-comment">
                     {{ csrf_field() }}
                     <div class="row">
                         <div class="col-12">
@@ -149,13 +149,36 @@
                             <span class="comment-date">{{ date('d F Y - G:i', strtotime($comment->created_at)) }}</span>
                             <h5>{{ $comment->user->name }}</h5>
                             <p>{{ $comment->body }}</p>
-{{--                            <a href="#">Like</a>--}}
-                            <a class="active" href="#">Reply</a>
+                            @auth
+                                <a class="active replay-btn" href="#">Reply</a>
+                                <div class="leave-comment-area leave-comment-area-child clearfix mt-30" style="display: none" data-parent="{{ $comment->id }}"></div>
+                            @endauth
                         </div>
                     </div>
+                    <ol class="children">
+                    @foreach($comment->replies as $replay)
+                            <li class="single_comment_area">
+                                <div class="comment-wrapper d-flex">
+                                    <div class="comment-author">
+                                        <img src="{{ asset('img/blog-img/photo.png') }}" alt="">
+                                    </div>
+                                    <!-- Comment Content -->
+                                    <div class="comment-content">
+                                        <span class="comment-date">{{ date('d F Y - G:i', strtotime($replay->created_at)) }}</span>
+                                        <h5>{{ $replay->user->name }}</h5>
+                                        <p>{{ $replay->body }}</p>
+                                        @auth
+                                            <a class="active replay-btn" href="#">Reply</a>
+                                            <div class="leave-comment-area leave-comment-area-child clearfix mt-30" style="display: none" data-parent="{{ $comment->id }}"></div>
+                                        @endauth
+                                    </div>
+                                </div>
+                            </li>
+                    @endforeach
+                    </ol>
                 </li>
             @endforeach
-        </ol>
+            </ol>
     </div>
 
     <ol class="foode-pager">
@@ -181,26 +204,55 @@
 <script>
 
     $(function() {
-        $('#leave-comment').on('submit', function  (e) {
-            let message = $('[name="message"]').val();
-            let userId = {{ \Illuminate\Support\Facades\Auth::id() }}
+
+        let replayField = "<form action=\"\" method=\"post\" class=\"leave-comment child\"> <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"> <div class=\"row\"> <div class=\"col-12\"> <div class=\"form-group\"> <textarea class=\"form-control\" name=\"message\" id=\"message\" cols=\"30\" rows=\"10\" placeholder=\"Comment\"></textarea> </div> </div> <div class=\"col-12\"> <button type=\"submit\" class=\"btn foode-btn\">Post Comment</button> </div> </div> </form>\n";
+        $('.leave-comment-area-child').append(replayField);
 
 
+        $('.replay-btn').on('click', function(e){
+            let ar = $(this).next();
+            ar.slideToggle();
+        });
+
+
+        $('.leave-comment').on('submit', function  (e) {
             e.stopPropagation();
             e.preventDefault();
+
+            let field = this;
+            let message = $(this).find('textarea').val();
+            let userId = "{{ Auth::id() }}";
+            let parent = null;
+            if($(this).hasClass('child')){
+                parent = this.parentNode.dataset['parent'];
+            }
 
             let postPromise = $.post( "{{ route('api.comment') }}", {
                 message: message,
                 user_id: userId,
                 post_id: "{{ $post->id }}",
+                parent_id: parent
             });
             postPromise.then(function (data) {
                 console.log('good');
-                $('[name="message"]').val('');
-                let el = "<li class=\"single_comment_area\"> <div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\"> </div> <div class=\"comment-content\"><span class=\"comment-date\">{{ date('d F Y - G:i')}}</span><h5>@auth{{ \Illuminate\Support\Facades\Auth::user()->name }}@endauth</h5><p>" + message + "</p> </div></div></li>";
-                $('#comments-place').prepend(el);
+                if(parent == null){
+                    // $('[name="message"]').val('');
+                    let el = "<li class=\"single_comment_area\"> <div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\"> </div> <div class=\"comment-content\"><span class=\"comment-date\">{{ date('d F Y - G:i')}}</span><h5>@auth{{ Auth::user()->name }}@endauth</h5><p>" + message + "</p> <a class=\"active\" href=\"\">Reply</a></div></div></li>";
+                    $('#comments-place').prepend(el);
+                } else {
+                    let childerComment = "<li class=\"single_comment_area\">\n<div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\" alt=\"\"> </div> <div class=\"comment-content\"> <span class=\"comment-date\">{{ date('d F Y - G:i')}}</span> <h5>{{ Auth::user()->name }}</h5> <p>" + message + "</p>@auth<a class=\"active replay-btn\" href=\"#\">Reply</a> <div class=\"leave-comment-area clearfix mt-30\" style=\"display: none\"> <form action=\"\" method=\"post\" class=\"leave-comment child\" data-parent=\"" + parent + "\"> <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"> <div class=\"row\"> <div class=\"col-12\"> <div class=\"form-group\"> <textarea class=\"form-control\" name=\"message\" id=\"message\" cols=\"30\" rows=\"10\" placeholder=\"Comment\"></textarea> </div> </div> <div class=\"col-12\"> <button type=\"submit\" class=\"btn foode-btn\">Post Comment</button> </div> </div> </form> </div>@endauth</div> </div> </li>"
+                    let rightPlace = $(field).parents('.single_comment_area').find('.children');
+                    let b = rightPlace.append(childerComment);
+                    $(field).parents('.leave-comment-area').slideUp();
+                }
+                $(field).find('textarea').val('');
                 let commentarea = $('.comment_area .headline');
-                commentarea.text(parseInt(commentarea.text())+1 + " Comments");
+                console.log(parseInt(commentarea.text()));
+                if(isNaN(parseInt(commentarea.text()))){
+                    commentarea.text("1 Comments");
+                } else {
+                    commentarea.text(parseInt(commentarea.text())+1 + " Comments");
+                }
             }, function (errorData) {
                 console.log('bad');
             });
@@ -210,7 +262,7 @@
         $('.like').on('click', function  (e) {
             let postId = e.target.parentNode.parentNode.dataset['id'];
             let isLike = e.target.closest( ".like" ).previousElementSibling == null;
-            let userId = {{ \Illuminate\Support\Facades\Auth::id() }}
+            let userId = {{ Auth::id() }}
 
             e.stopPropagation();
             e.preventDefault();

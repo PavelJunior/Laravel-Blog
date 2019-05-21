@@ -57,6 +57,7 @@ class ApiController extends Controller
         $comment->body = $request->input('message');
         $comment->user_id = $request->input('user_id');
         $comment->post_id = $request->input('post_id');
+        $comment->parent_id = $request->input('parent_id');
 
         $comment->save();
     }
