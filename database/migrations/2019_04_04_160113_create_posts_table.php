@@ -22,7 +22,7 @@ class CreatePostsTable extends Migration
             $table->text('preview');
             $table->text('body');
             $table->integer('views')->default(0);
-            $table->boolean('is_active')->default(0);
+            $table->tinyInteger('is_active')->default(0);
             $table->timestamps();
         });
     }

@@ -126,7 +126,15 @@
     @endauth
 
     @guest
-        <h4 class="headline"><a href="{{ route('Auth.signUp.Get') }}" style="font-size: 25px" ><b>Register</b></a> or <a href="{{ route('Auth.logIn.Get') }}" style="font-size: 25px" ><b>login</b></a>  to leave a comment</h4>
+        <h4 class="headline">
+            <a href="{{ route('Auth.signUp.Get') }}" style="font-size: 25px" >
+                <b>Register</b>
+            </a>
+            or
+            <a href="{{ route('Auth.logIn.Get') }}" style="font-size: 25px" >
+                <b>login</b>
+            </a>  to leave a comment
+        </h4>
 @endguest
 
     <!-- Comment Area Start -->
@@ -237,10 +245,10 @@
                 console.log('good');
                 if(parent == null){
                     // $('[name="message"]').val('');
-                    let el = "<li class=\"single_comment_area\"> <div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\"> </div> <div class=\"comment-content\"><span class=\"comment-date\">{{ date('d F Y - G:i')}}</span><h5>@auth{{ Auth::user()->name }}@endauth</h5><p>" + message + "</p> <a class=\"active\" href=\"\">Reply</a></div></div></li>";
+                    let el = "<li class=\"single_comment_area\"> <div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\"> </div> <div class=\"comment-content\"><span class=\"comment-date\">{{ date('d F Y - G:i')}}</span><h5>@auth{{ Auth::user()->name }}@endauth</h5><p>" + message + "</p><a class=\"active replay-btn\" href=\"{{ Request::url() }}\">Reply</a>\n</div></div><ol class=\"children\"> </ol></li>";
                     $('#comments-place').prepend(el);
                 } else {
-                    let childerComment = "<li class=\"single_comment_area\">\n<div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\" alt=\"\"> </div> <div class=\"comment-content\"> <span class=\"comment-date\">{{ date('d F Y - G:i')}}</span> <h5>{{ Auth::user()->name }}</h5> <p>" + message + "</p>@auth<a class=\"active replay-btn\" href=\"#\">Reply</a> <div class=\"leave-comment-area clearfix mt-30\" style=\"display: none\"> <form action=\"\" method=\"post\" class=\"leave-comment child\" data-parent=\"" + parent + "\"> <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"> <div class=\"row\"> <div class=\"col-12\"> <div class=\"form-group\"> <textarea class=\"form-control\" name=\"message\" id=\"message\" cols=\"30\" rows=\"10\" placeholder=\"Comment\"></textarea> </div> </div> <div class=\"col-12\"> <button type=\"submit\" class=\"btn foode-btn\">Post Comment</button> </div> </div> </form> </div>@endauth</div> </div> </li>"
+                    let childerComment = "<li class=\"single_comment_area\">\n<div class=\"comment-wrapper d-flex\"> <div class=\"comment-author\"> <img src=\"{{ asset('img/blog-img/photo.png') }}\" alt=\"\"> </div> <div class=\"comment-content\"> <span class=\"comment-date\">{{ date('d F Y - G:i')}}</span> <h5>@auth{{ Auth::user()->name }}@endauth</h5> <p>" + message + "</p>@auth<a class=\"active replay-btn\" href=\"{{ Request::url() }}\">Reply</a> <div class=\"leave-comment-area clearfix mt-30\" style=\"display: none\"> <form action=\"\" method=\"post\" class=\"leave-comment child\" data-parent=\"" + parent + "\"> <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"> <div class=\"row\"> <div class=\"col-12\"> <div class=\"form-group\"> <textarea class=\"form-control\" name=\"message\" id=\"message\" cols=\"30\" rows=\"10\" placeholder=\"Comment\"></textarea> </div> </div> <div class=\"col-12\"> <button type=\"submit\" class=\"btn foode-btn\">Post Comment</button> </div> </div> </form> </div>@endauth</div> </div> </li>"
                     let rightPlace = $(field).parents('.single_comment_area').find('.children');
                     let b = rightPlace.append(childerComment);
                     $(field).parents('.leave-comment-area').slideUp();

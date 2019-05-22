@@ -6,41 +6,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\PostEditRequest;
 use App\Models\Category;
-use App\Models\Comment;
-use App\Models\Like;
 use App\Models\Post;
 use App\Models\Post_tag;
 use App\Models\Tag;
+use App\Traits\PostsDBQueriesTrait;
 use DB;
-use Illuminate\Support\Facades\Cache;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class PostController extends Controller
 {
+    use PostsDBQueriesTrait;
+
     public function Main()
     {
-        $posts = Post::where('is_active', '1')
-            ->withCount(['comments',
-                'likes' => function($query) {
-                    $query->where('like', '1');
-                },
-                'likes AS dislikes_count' => function($query) {
-                    $query->where('like', '-1');
-                },
-                'likes AS liked'  => function($query) {
-                    $query->where('like', '1')->where('user_id', Auth::id());
-                },
-                'likes AS disliked'  => function($query) {
-                    $query->where('like', '-1')->where('user_id', Auth::id());
-                }
-            ])
-            ->with('category', 'user')
-            ->orderBy('posts.created_at', 'DESC')
-            ->paginate(6);
+//        dd(Post::all()->where('is_active', '1'));
+        $posts = $this->ManyPosts(
+            Post::where('is_active', '1')
+        )->paginate(6);
 
         return view('layouts.primary',[
             'page' => 'pages.main',
@@ -56,24 +41,9 @@ class PostController extends Controller
         $category = Category::where('name', $category)
             ->firstOrFail();
 
-        $posts = Post::where('is_active', '1')
-            ->where('category_id', $category->id)
-            ->withCount(['comments',
-                'likes' => function($query) {
-                    $query->where('like', '1');
-                },
-                'likes AS dislikes_count' => function($query) {
-                    $query->where('like', '-1');
-                },
-                'likes AS liked'  => function($query) {
-                    $query->where('like', '1')->where('user_id', Auth::id());
-                },
-                'likes AS disliked'  => function($query) {
-                    $query->where('like', '-1')->where('user_id', Auth::id());
-                }
-            ])
-            ->with('category', 'user')
-            ->orderBy('created_at', 'DESC')
+        $posts = $this->ManyPosts(
+            Post::where('category_id', $category->id)
+        )->where('is_active', '1')
             ->paginate(6);
 
         return view('layouts.primary',[
@@ -90,25 +60,10 @@ class PostController extends Controller
         $tag = Tag::where('name', $tag)
             ->firstOrFail();
 
-        $posts = $tag->posts()
-            ->where('is_active', '1')
-            ->withCount(['comments',
-                'likes' => function($query) {
-                    $query->where('like', '1');
-                },
-                'likes AS dislikes_count' => function($query) {
-                    $query->where('like', '-1');
-                },
-                'likes AS liked'  => function($query) {
-                    $query->where('like', '1')->where('user_id', Auth::id());
-                },
-                'likes AS disliked'  => function($query) {
-                    $query->where('like', '-1')->where('user_id', Auth::id());
-                }
-            ])
-            ->with('category', 'user')
-            ->orderBy('created_at', 'DESC')
-            ->paginate(6);
+        $posts = $this->ManyPosts(
+            $tag->posts()
+        )->where('is_active', '1')
+        ->paginate(6);
 
         return view('layouts.primary',[
             'page' => 'pages.main',
@@ -123,11 +78,12 @@ class PostController extends Controller
     {
         $search = $request->input('query');
 
-        $posts = Post::where('title', 'LIKE', '%' . $search . '%')
-            ->orwhere('preview', 'LIKE', '%' . $search . '%')
-            ->orwhere('body', 'LIKE', '%' . $search . '%')
-            ->where('is_active', '1')
-            ->paginate(6);
+        $posts = $this->ManyPosts(
+            Post::where('title', 'LIKE', '%' . $search . '%')
+                ->orwhere('preview', 'LIKE', '%' . $search . '%')
+                ->orwhere('body', 'LIKE', '%' . $search . '%'),
+            true
+        )->paginate(6);
 
         return view('layouts.primary',[
             'page' => 'pages.main',
@@ -142,24 +98,9 @@ class PostController extends Controller
     {
         $user = Auth::id();
 
-        $posts = Post::where('user_id', '=', $user)
-            ->withCount(['comments',
-                'likes' => function($query) {
-                    $query->where('like', '1');
-                },
-                'likes AS dislikes_count' => function($query) {
-                    $query->where('like', '-1');
-                },
-                'likes AS liked'  => function($query) {
-                    $query->where('like', '1')->where('user_id', Auth::id());
-                },
-                'likes AS disliked'  => function($query) {
-                    $query->where('like', '-1')->where('user_id', Auth::id());
-                }
-            ])
-            ->with('category', 'user')
-            ->orderBy('created_at', 'DESC')
-            ->paginate(6);
+        $posts = $this->ManyPosts(
+            Post::where('user_id', '=', $user)
+        )->paginate(6);
 
         return view('layouts.primary',[
             'page' => 'pages.main',
@@ -173,23 +114,22 @@ class PostController extends Controller
 
     public function OneGet($id)
     {
-        $post = Post::withCount(['comments',
-            'likes' => function($query) {
-                $query->where('like', '1');
-            },
-            'likes AS dislikes_count' => function($query) {
-                $query->where('like', '-1');
-            },
-            'likes AS liked'  => function($query) {
-                $query->where('like', '1')->where('user_id', Auth::id());
-            },
-            'likes AS disliked'  => function($query) {
-                $query->where('like', '-1')->where('user_id', Auth::id());
+        $post = $this->OnePost(
+            Post::where('is_active', '!=', '-1')
+        )->findOrFail($id);
+
+        if($post->is_active != 1){
+            $user = Auth::user();
+            if($user){
+                if($user->cant('edit_own', $post)) {
+                    abort(403);
+                }
+            } else {
+                abort(403);
             }
-        ])
-            ->with('category', 'user', 'tags')
-            ->where('is_active', '1')
-            ->findOrFail($id);
+        }
+
+//        dd(Post::all());
 
         $comments = $post->comments()
             ->where('parent_id', NULL)
@@ -304,13 +244,10 @@ class PostController extends Controller
 
     public function EditGet($id)
     {
-        $post = Post::where('is_active', '1')
-            ->findOrFail($id);
-
+        $post = Post::findOrFail($id);
         $user = Auth::user();
 
-
-        if($user->cant('edit_own', $post)) {
+        if(!$user || $user->cant('edit_own', $post)) {
             abort(403);
         }
 
