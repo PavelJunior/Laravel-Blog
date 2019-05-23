@@ -129,8 +129,6 @@ class PostController extends Controller
             }
         }
 
-//        dd(Post::all());
-
         $comments = $post->comments()
             ->where('parent_id', NULL)
             ->with('replies')
@@ -145,8 +143,6 @@ class PostController extends Controller
             ->with('user', 'category')
             ->withCount('comments')
             ->get();
-
-//        dd($samePosts);
 
         $viewed = Session::get('viewed_post', []);
         if (!in_array($post->id, $viewed)) {

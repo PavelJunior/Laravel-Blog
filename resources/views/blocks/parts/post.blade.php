@@ -23,13 +23,7 @@
         </div>
         <p class="post-excerpt">{{ $post->preview }}</p>
         <a href="{{ url("/post/{$post->id}") }}" class="read-more-btn">Continue Reading <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
-        <div class="d-flex">
-        @can('edit_own', $post)
-            <a href="{{ url("/post/edit/{$post->id}") }}" class="read-more-btn">Edit <i class="fa m-0 p-0" aria-hidden="true"></i></a>
-        @endcan
-        @can('delete_own', $post)
-            <a onclick="return confirm('Are you sure?')" href="{{ route('post.delete', $post->id) }}" class="read-more-btn ml-30">Delete <i class="fa" aria-hidden="true"></i></a>
-        @endcan
+
         @auth
             <div class="like-area" data-id="{{ $post->id }}">
                 <a class="like likestyle i-l {{ $post->liked == '1' ? 'green' : '' }} " href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
@@ -37,11 +31,18 @@
             </div>
         @endauth
         @guest
-                <div class="like-area" data-id="{{ $post->id }}">
-                    <a class="likestyle i-l like-disabled" href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
-                    <a class="likestyle i-d like-disabled" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
-                </div>
+            <div class="like-area" data-id="{{ $post->id }}">
+                <a class="likestyle i-l like-disabled" href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
+                <a class="likestyle i-d like-disabled" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
+            </div>
         @endguest
+        <div class="d-flex">
+        @can('edit_own', $post)
+            <a href="{{ url("/post/edit/{$post->id}") }}" class="read-more-btn">Edit <i class="fa m-0 p-0" aria-hidden="true"></i></a>
+        @endcan
+        @can('delete_own', $post)
+            <a onclick="return confirm('Are you sure?')" href="{{ route('post.delete', $post->id) }}" class="read-more-btn ml-30">Delete <i class="fa" aria-hidden="true"></i></a>
+        @endcan
         </div>
     </div>
     <!-- Post Curve Line -->

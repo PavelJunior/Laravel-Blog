@@ -38,6 +38,7 @@ class ForgotPasswordController extends Controller
             'page' => 'auth.passwords.email',
             'title' => 'Reset password',
             'withInstagramFooter' => false,
+            'ways' => ['Log in', 'Forgot Password'],
         ]);
     }
 }

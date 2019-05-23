@@ -34,16 +34,16 @@ Route::match(['get', 'post'], '/contact', 'AdditionalPagesController@contact')
     ->name('main.contact');
 
 Route::get('/sign-up', 'AuthController@signUp')
-    ->name('Auth.signUp.Get');
+    ->name('auth.signup.get');
 
 Route::post('/sign-up', 'AuthController@signUpPost')
-    ->name('Auth.signUp.Post');
+    ->name('auth.signup.post');
 
 Route::get('/log-in', 'AuthController@logIn')
-    ->name('Auth.logIn.Get');
+    ->name('auth.login.get');
 
 Route::post('/log-in', 'AuthController@logInPost')
-    ->name('Auth.logIn.Post');
+    ->name('auth.login.post');
 
 Route::group(['prefix' => '/post'], function() {
 
@@ -71,7 +71,8 @@ Route::group(['prefix' => '/post'], function() {
 
 });
 
-Route::get('log-in/{provider}', 'GoogleController@redirectToProvider');
+Route::get('log-in/{provider}', 'GoogleController@redirectToProvider')
+    ->name('api.login');
 
 Route::get('log-in/{provider}/callback', 'GoogleController@handleProviderCallback');
 

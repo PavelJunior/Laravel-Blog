@@ -72,10 +72,10 @@
                         </div>
                     </div>
                     <div id="oldimage" class="d-flex flex-column">
-                        <label class="col-sm-3 control-label">Old image</label>
+                        <label class="col-sm-3 control-label">Image</label>
                         <img  src="{{ asset('uploads/cover_images/' . $post->cover_image) }}" height="500" width="500" class="pl-3" alt="">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-5">
                         <label class="col-sm-6 control-label">If you want to change image choose new one</label>
                         <div class="col-sm-9">
                             <input id = "fileinput" type="file" name="cover_image">
@@ -83,7 +83,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="submit" class="btn btn-warning">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
                         </div>
                     </div>
                 </form>

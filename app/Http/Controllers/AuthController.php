@@ -20,7 +20,7 @@ class AuthController extends Controller
             'page' => 'pages.sign-up',
             'title' => 'Sign Up',
             'withInstagramFooter' => false,
-            'ways' => ['Registration']
+            'ways' => ['Sign up']
 
         ]);
     }
@@ -50,14 +50,19 @@ class AuthController extends Controller
             Auth::logout();
         }
 
-        session()->put('from', url()->previous());
+        $prevURL = url()->previous();
+        if($prevURL == route('auth.signup.get')){
+            $prevURL = route('main.index');
+        }
+
+        session()->put('from', $prevURL);
 
 
         return view('layouts.secondary', [
             'page' => 'pages.log-in',
             'title' => 'Log in',
             'withInstagramFooter' => false,
-            'ways' => ['Authorization']
+            'ways' => ['Log in']
 
         ]);
     }

@@ -1465,9 +1465,6 @@ img {
       .single-post-details-area .post-content blockquote .blockquote-text h6:last-child {
         color: #e59f80; }
 
-  .blog-posts-area .like-area{
-    margin-bottom: 30px;
-  }
   .blog-posts-area .likestyle{
     margin-right: 15px;
   }
@@ -1680,6 +1677,7 @@ blockquote {
     border-color: #e59f80; }
 .contact-form-area textarea.form-control {
   height: 120px; }
+
 
 /* ======= The End ======= */
 

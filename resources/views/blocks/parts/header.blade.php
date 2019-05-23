@@ -71,8 +71,8 @@
                                 <li><a href="{{ route('main.about') }}">About</a></li>
                                 <li><a href="{{ route('main.contact') }}">Contact</a></li>
                                 @guest
-                                    <li><a href="{{ route('Auth.signUp.Get') }}">Registration</a></li>
-                                    <li><a href="{{ route('Auth.logIn.Get') }}">Login</a></li>
+                                    <li><a href="{{ route('auth.signup.get') }}">Registration</a></li>
+                                    <li><a href="{{ route('auth.login.get') }}">Login</a></li>
                                 @endguest
 
                                 @can('create', App\Models\Post::class)
@@ -84,7 +84,7 @@
                                 @endcan
 
                                 @auth
-                                    <li><a href="{{ route('Auth.logIn.Get') }}">Exit</a></li>
+                                    <li><a href="{{ route('auth.login.get') }}">Exit</a></li>
                                 @endauth
                             </ul>
 

@@ -49,6 +49,7 @@ class VerificationController extends Controller
                 'page' => 'auth.verify',
                 'title' => 'Verify email',
                 'withInstagramFooter' => false,
+                'ways' => ['Sign up', 'Varify Email'],
             ]);
     }
 

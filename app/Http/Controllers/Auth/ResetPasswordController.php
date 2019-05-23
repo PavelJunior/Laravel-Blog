@@ -48,6 +48,7 @@ class ResetPasswordController extends Controller
             'page' => 'auth.passwords.reset',
             'title' => 'Reset password',
             'withInstagramFooter' => false,
+            'ways' => ['Log in', 'Reset Password'],
         ])->with(
             ['token' => $token, 'email' => $request->email]
         );
