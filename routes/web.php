@@ -71,10 +71,10 @@ Route::group(['prefix' => '/post'], function() {
 
 });
 
-Route::get('log-in/{provider}', 'GoogleController@redirectToProvider')
+Route::get('log-in/{provider}', 'SocialLoginController@redirectToProvider')
     ->name('api.login');
 
-Route::get('log-in/{provider}/callback', 'GoogleController@handleProviderCallback');
+Route::get('log-in/{provider}/callback', 'SocialLoginController@handleProviderCallback');
 
 Auth::routes(['verify' => true]);
 

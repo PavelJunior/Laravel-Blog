@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <button class="btn btn-warning btn-block my-4" type="submit">Sign in</button>
+        <button class="btn btn-warning btn-block my-4" type="submit">Log in</button>
 
         <p>Not a member?
             <a href="{{ route('auth.signup.get') }}">Register</a>
@@ -40,6 +40,12 @@
         </a>
         <a type="button" class="light-blue-text mx-2" style="font-size: 20px; padding: 0px 5px" href="{{ route('api.login', "twitter") }}" >
             <i class="fa fa-twitter"></i>
+        </a>
+        <a type="button" class="light-blue-text mx-2" style="font-size: 20px; padding: 0px 5px" href="{{ route('api.login', "linkedin") }}">
+            <i class="fa fa-linkedin"></i>
+        </a>
+        <a type="button" class="light-blue-text mx-2" style="font-size: 20px; padding: 0px 5px" href="{{ route('api.login', "github") }}">
+            <i class="fa fa-github"></i>
         </a>
     </form>
 </div>

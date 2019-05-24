@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Socialite;
 
-class GoogleController extends Controller
+class SocialLoginController extends Controller
 {
     public function redirectToProvider($provider)
     {
@@ -28,8 +28,9 @@ class GoogleController extends Controller
         if($authUser){
             return $authUser;
         }
+        $userName = $user->name == null ? $user->nickname : $user->name;
         return User::create([
-            'name'=> $user->name,
+            'name'=> $userName,
             'email'=> $user->email,
             'provider'=> strtoupper($provider),
             'provider_id' => $user->id,

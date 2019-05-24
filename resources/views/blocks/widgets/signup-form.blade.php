@@ -82,6 +82,12 @@
         <a type="button" class="mx-2" style="font-size: 20px; padding: 0px 5px" href="{{ route('api.login', "twitter") }}" >
             <i class="fa fa-twitter"></i>
         </a>
+        <a type="button" class="light-blue-text mx-2" style="font-size: 20px; padding: 0px 5px" href="{{ route('api.login', "linkedin") }}">
+            <i class="fa fa-linkedin"></i>
+        </a>
+        <a type="button" class="light-blue-text mx-2" style="font-size: 20px; padding: 0px 5px" href="{{ route('api.login', "github") }}">
+            <i class="fa fa-github"></i>
+        </a>
 
     </form>
 </div>

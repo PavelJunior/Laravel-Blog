@@ -28,13 +28,13 @@
     </div>
 
     @auth
-        <div class="like-area" data-id="{{ $post->id }}">
+        <div class="like-area mb-30" data-id="{{ $post->id }}">
             <a class="like likestyle i-l {{ $post->liked == '1' ? 'green' : '' }} " href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
             <a class="like likestyle i-d {{ $post->disliked == '1' ? 'red' : '' }}" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
         </div>
     @endauth
     @guest
-        <div class="like-area" data-id="{{ $post->id }}">
+        <div class="like-area mb-30" data-id="{{ $post->id }}">
             <a class="likestyle i-l like-disabled" href="#"><i class="fa fa-thumbs-up"></i> <span class="like-number">{{ $post->likes_count }}</span></a>
             <a class="likestyle i-d like-disabled" href="#"><i class="fa fa-thumbs-down"></i> <span class="like-number">{{ $post->dislikes_count }}</span></a>
         </div>
@@ -104,8 +104,8 @@
 
     @auth
         <div class="leave-comment-area clearfix">
-            <div class="comment-form">
-                <h4 class="headline">Leave A Comment</h4>
+            <div class="comment-form" >
+                <h4 class="headline" id="headline">Leave A Comment</h4>
 
                 <!-- Comment Form -->
                 <form action="" method="post" class="leave-comment">
@@ -126,7 +126,7 @@
     @endauth
 
     @guest
-        <h4 class="headline">
+        <h4 class="headline" id="headline">
             <a href="{{ route('auth.signup.get') }}" style="font-size: 22px" >
                 <b>Register</b>
             </a>
@@ -135,7 +135,7 @@
                 <b>login</b>
             </a>  to leave a comment
         </h4>
-@endguest
+    @endguest
 
     <!-- Comment Area Start -->
     <div class="comment_area clearfix">
@@ -194,14 +194,14 @@
             <li></li>
             <li></li>
         @elseif($comments->currentPage() == $comments->lastPage())
-            <li><a href="{{ $comments->previousPageUrl("#leave-comment") . "#leave-comment" }}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Newer</a></li>
+            <li><a href="{{ $comments->previousPageUrl() . "#headline" }}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Newer</a></li>
             <li></li>
         @elseif($comments->currentPage() == 1)
             <li></li>
-            <li><a href="{{ $comments->nextPageUrl('leave-comment') . "#leave-comment" }}">Older <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
+            <li><a href="{{ $comments->nextPageUrl() . "#headline" }}">Older <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
         @else
-            <li><a href="{{ $comments->previousPageUrl() . "#leave-comment"}}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Newer</a></li>
-            <li><a href="{{ $comments->nextPageUrl() . "#leave-comment"}}">Older <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
+            <li><a href="{{ $comments->previousPageUrl() . "#headline"}}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Newer</a></li>
+            <li><a href="{{ $comments->nextPageUrl() . "#headline"}}">Older <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
         @endif
     </ol>
 </div>
