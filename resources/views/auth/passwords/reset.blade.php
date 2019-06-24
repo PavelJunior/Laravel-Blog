@@ -66,6 +66,9 @@
     <form class="text-center border border-light p-5 col-md-6" style="margin: 0 auto " method="POST" action="{{ route('password.update') }}">
         <p class="h4 mb-4">Reset Password</p>
 
+        @csrf
+        <input type="hidden" name="token" value="{{ $token }}">
+
         @if (count($errors) > 0)
             <div class="alert alert-danger alert-dismissable" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -73,7 +76,6 @@
                 Please correct them to complete registration.
             </div>
         @endif
-        {{ csrf_field() }}
 
         <input type="email" class="form-control mb-4 {{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" placeholder="E-mail">
         @if ($errors->has('email'))
