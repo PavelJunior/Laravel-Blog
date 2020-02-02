@@ -26,21 +26,21 @@
             </span>
         @endif
 
-        <input type="password" class="form-control mb-4 {{ $errors->has('password2') ? ' is-invalid' : '' }}" name="password2" placeholder="Password Confirmation">
+        <input type="password" class="form-control mb-4 {{ $errors->has('password2') ? ' is-invalid' : '' }}" name="password2" placeholder="Password confirmation">
          @if ($errors->has('password2'))
             <span class="invalid-feedback" role="alert" style="margin-top: -20px; margin-bottom: 20px;">
                 <strong>{{ $errors->first('password2') }}</strong>
             </span>
         @endif
 
-        <input type="text" class="form-control mb-4 {{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" placeholder="Ivan Ivanov">
+        <input type="text" class="form-control mb-4 {{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" placeholder="Name">
          @if ($errors->has('name'))
             <span class="invalid-feedback" role="alert" style="margin-top: -20px; margin-bottom: 20px;">
                 <strong>{{ $errors->first('name') }}</strong>
             </span>
         @endif
 
-        <input type="text" class="form-control mb-4 {{ $errors->has('phone') ? ' is-invalid' : '' }}" name="phone" value="{{ old('phone') }}" placeholder="Phone">
+        <input type="text" class="form-control mb-4 {{ $errors->has('phone') ? ' is-invalid' : '' }}" name="phone" value="{{ old('phone') }}" placeholder="Phone number">
          @if ($errors->has('phone'))
             <span class="invalid-feedback" role="alert" style="margin-top: -20px; margin-bottom: 20px;">
                 <strong>{{ $errors->first('phone') }}</strong>
