@@ -1,4 +1,4 @@
-## A Simle Blog Built Using Laravel PHP Framework. 
+## A Simple Blog Built Using Laravel PHP Framework. 
 **Main feathers implemented in the project:**
 - Authorization with Google, Twitter, Github, LinkedIn APIs using OAuth 2.0 protocol
 - Authorization system with password reset and email confirmation by email
